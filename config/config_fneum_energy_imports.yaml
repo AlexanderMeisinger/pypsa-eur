@@ -45,7 +45,7 @@ scenario:
   opts:
   - ''
   sector_opts:
-  - 'Co2L0-2190SEG-T-H-B-I-S-A-onwind+p0.5' #Not all parameters are right since S is not available in this version
+  - 'Co2L0-8760SEG-T-H-B-I-S-A-onwind+p0.5' #Not all parameters are right since S is not available in this version
   planning_horizons:
   # - 2020
   # - 2030
@@ -596,9 +596,13 @@ sector:
   overdimension_heat_generators:
     decentral: 1.1  #to cover demand peaks bigger than data
     central: 1.0
-  chp: true
-  micro_chp: false
-  solar_thermal: false
+  chp:
+    enable: true
+    fuel:
+    - solid biomass # For solid biomass, CHP with and without CC are added
+    - gas # For all other fuels the same techno economic data from gas CHP is taken
+    micro_chp: false # Only gas is used for micro_chp
+  solar_thermal: false 
   solar_cf_correction: 0.788457  # =  >>> 1/1.2683
   marginal_cost_storage: 0. #1e-4
   methanation: true
