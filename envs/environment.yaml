@@ -57,7 +57,7 @@ dependencies:
 # GIS dependencies:
 - cartopy
 - descartes
-- rasterio
+- rasterio<=1.4.1
 
 - pip:
   - gurobipy
