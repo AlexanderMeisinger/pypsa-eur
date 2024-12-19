@@ -417,9 +417,7 @@ def plot_carbon_budget_distribution(input_eurostat, options):
 
     if snakemake.config["foresight"] == "myopic":
         path_cb = "results/" + snakemake.params.RDIR + "/csvs/"
-        co2_cap = pd.read_csv(path_cb + "carbon_budget_distribution.csv", index_col=0)[
-            ["cb"]
-        ]
+        co2_cap = pd.read_csv(path_cb + "carbon_budget_distribution.csv", index_col=0, header=0, names = ["cb"])[["cb"]]
         co2_cap *= e_1990
     else:
         supply_energy = pd.read_csv(
@@ -505,7 +503,14 @@ if __name__ == "__main__":
     if "snakemake" not in globals():
         from _helpers import mock_snakemake
 
-        snakemake = mock_snakemake("plot_summary")
+        snakemake = mock_snakemake(
+            "plot_summary",
+            configfiles="/mnt/e/H2GMA/Github/Europe/analyse-h2g-a-ap3-eu/config/config.pathways-myopics_default.yaml",
+            opts="",
+            clusters="39",
+            ll="vopt",
+            sector_opts="144H-T-H-B-I-A-solar+p3-dist1"
+        )
 
     configure_logging(snakemake)
     set_scenario_config(snakemake)
@@ -519,6 +524,7 @@ if __name__ == "__main__":
     plot_balances()
 
     co2_budget = snakemake.params["co2_budget"]
+    
     if (
         isinstance(co2_budget, str) and co2_budget.startswith("cb")
     ) or snakemake.params["foresight"] == "perfect":
