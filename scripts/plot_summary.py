@@ -416,7 +416,7 @@ def plot_carbon_budget_distribution(input_eurostat, options):
 
     if snakemake.config["foresight"] == "myopic":
         path_cb = "results/" + snakemake.params.RDIR + "/csvs/"
-        co2_cap = pd.read_csv(path_cb + "carbon_budget_distribution.csv", index_col=0)[
+        co2_cap = pd.read_csv(path_cb + "carbon_budget_distribution.csv", index_col=0, header=0, names=["cb"])[
             ["cb"]
         ]
         co2_cap *= e_1990

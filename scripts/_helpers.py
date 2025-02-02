@@ -782,7 +782,7 @@ def update_config_from_wildcards(config, w, inplace=True):
         if co2l_value is not None:
             config["co2_budget"] = float(co2l_value)
 
-        if co2_distribution := get_opt(opts, r"^(cb)\d+(\.\d+)?(ex|be)$"):
+        if co2_distribution := get_opt(opts, r"^(cb)\d+(\.\d+)?(ex\d*|be\d*)$"):
             config["co2_budget"] = co2_distribution
 
         if co2_budget := get_opt(opts, r"^(cb)\d+(\.\d+)?$"):
