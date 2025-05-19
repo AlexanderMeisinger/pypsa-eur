@@ -152,6 +152,9 @@ def define_spatial(nodes, options):
 
     spatial.methanol = SimpleNamespace()
 
+    #spatial.methanol.nodes = nodes + " methanol"
+    #spatial.methanol.locations = nodes
+
     spatial.methanol.nodes = ["EU methanol"]
     spatial.methanol.locations = ["EU"]
 
@@ -170,6 +173,9 @@ def define_spatial(nodes, options):
     spatial.oil.nodes = ["EU oil"]
     spatial.oil.locations = ["EU"]
 
+    #spatial.oil.nodes = nodes + " oil"
+    #spatial.oil.locations = nodes
+
     if options["regional_oil_demand"]:
         spatial.oil.demand_locations = nodes
         spatial.oil.naphtha = nodes + " naphtha for industry"
@@ -187,11 +193,19 @@ def define_spatial(nodes, options):
 
     # uranium
     spatial.uranium = SimpleNamespace()
+    
+    #spatial.uranium.nodes = nodes + " uranium"
+    #spatial.uranium.locations = nodes
+
     spatial.uranium.nodes = ["EU uranium"]
     spatial.uranium.locations = ["EU"]
 
     # coal
     spatial.coal = SimpleNamespace()
+
+    #spatial.coal.nodes = nodes + " coal"
+    #spatial.coal.locations = nodes
+
     spatial.coal.nodes = ["EU coal"]
     spatial.coal.locations = ["EU"]
 
@@ -204,6 +218,10 @@ def define_spatial(nodes, options):
 
     # lignite
     spatial.lignite = SimpleNamespace()
+
+    #spatial.lignite.nodes = nodes + " lignite"
+    #spatial.lignite.locations = nodes
+
     spatial.lignite.nodes = ["EU lignite"]
     spatial.lignite.locations = ["EU"]
 
@@ -525,6 +543,10 @@ def add_carrier_buses(n, carrier, nodes=None):
                 unit=unit,
             )
 
+            
+            #n.madd("Bus", nodes + " primary", location=spatial.oil.locations, carrier="oil")
+            #n.madd("Bus", "co2 atmosphere", location="EU", carrier="co2", unit="t_co2")
+            #n.madd("Bus", "co2 atmosphere", location="EU", carrier="co2", unit="t_co2")
             n.add(
                 "Link",
                 nodes + " refining",
@@ -2758,6 +2780,47 @@ def add_biomass(n, costs):
             p_nom_extendable=True,
         )
 
+    #if options["h2_import"].get("enable", False):
+    #    h2_import_price = options["h2_import"]["price"]
+        # convert TWh in MWh
+    #    h2_import_max_amount = options["h2_import"]["max_amount"] * 1e6
+
+    #    logger.info(
+    #        "Adding hydrogen import with cost %.2f EUR/MWh, a limit of %.2f TWh",
+    #        h2_import_price,
+    #        options["h2_import"]["max_amount"],
+    #    )
+
+    #    n.add("Carrier", "hydrogen import")
+
+    #    n.add(
+    #        "Bus",
+    #        ["EU hydrogen import"],
+    #        location="EU",
+    #        carrier="hydrogen import",
+    #    )
+
+    #    n.add(
+    #        "Store",
+    #        ["hydrogen import"],
+    #        bus=["EU hydrogen import"],
+    #        carrier="hydrogen import",
+    #        e_nom=h2_import_max_amount,
+    #        marginal_cost=h2_import_price,
+    #        e_initial=h2_import_max_amount,
+    #    )
+
+    #    n.add(
+    #        "Link",
+    #        spatial.h2.nodes,
+    #        suffix=" hydrogen import",
+    #        bus0=["EU hydrogen import"],
+    #        bus1=spatial.h2.nodes,
+    #        carrier="hydrogen import",
+    #        efficiency=1.0,
+    #        p_nom_extendable=True,
+    #    )
+
     if biomass_potentials.filter(like="unsustainable").sum().sum() > 0:
         n.add(
             "Generator",
@@ -4604,10 +4667,11 @@ if __name__ == "__main__":
         snakemake = mock_snakemake(
             "prepare_sector_network",
             opts="",
-            clusters="38",
+            clusters="39",
             ll="vopt",
-            sector_opts="",
-            planning_horizons="2030",
+            sector_opts="144H",
+            planning_horizons="2025",
+            configfiles="/mnt/e/H2GMA/Github/Europe/analyse-h2g-a-ap3-eu/config/base-EU-climate-goals/config.main.yaml"
         )
 
     configure_logging(snakemake)
