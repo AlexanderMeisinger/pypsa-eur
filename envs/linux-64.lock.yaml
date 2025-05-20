@@ -5,7 +5,7 @@
 # platform: linux-64
 # input_hash: ced4943098a81eb1020ac5a833a1059d687e15573fe0431a3d7400d9fe711c44
 
-name: pypsa-eur
+name: pypsa-eur-AP10
 channels:
   - conda-forge
   - bioconda
