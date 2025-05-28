@@ -744,6 +744,19 @@ def update_config_from_wildcards(config, w, inplace=True):
         if "A" in opts:
             config["sector"]["agriculture"] = True
 
+        # Enable imports parsing for multiple carriers like "imp+H2+100+gas+200"
+        import_prefix = [o for o in opts if o.startswith("imp+")]
+        if import_prefix:
+            parts = import_prefix[0].split("+")[1:]  # remove "imp"
+
+            config["sector"]["imports"]["enable"] = True
+            config["sector"]["imports"]["price"] = {}
+            
+            for i in range(0, len(parts), 2):
+                carrier = parts[i]
+                price = float(parts[i + 1])
+                config["sector"]["imports"]["price"][carrier] = price
+
         if "CCL" in opts:
             config["solving"]["constraints"]["CCL"] = True
 
