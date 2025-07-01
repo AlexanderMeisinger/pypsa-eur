@@ -7,6 +7,6 @@ scenarios=(
 
 for scenario in "${scenarios[@]}"; do
     path="/mnt/e/H2GMA/Github/AP10/analyse-h2g-a-ap10/config/base-EU-climate-goals/${scenario}.yaml"
-    echo "Running with $path"
+    echo "Running $path"
     snakemake --cores all --configfile "$path"
 done
