@@ -28,6 +28,7 @@ import logging
 import pandas as pd
 
 from scripts._helpers import configure_logging, set_scenario_config
+from scripts.prepare_sector_network import get
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +38,13 @@ if __name__ == "__main__":
 
         snakemake = mock_snakemake(
             "build_industrial_energy_demand_per_node",
-            clusters=48,
-            planning_horizons=2030,
+            opts="",
+            clusters="39",
+            sector_opts="144H-imp+H2+0-growth+2",
+            planning_horizons="2050",
+            configfiles="/mnt/e/H2GMA/Github/AP10/analyse-h2g-a-ap10/config/base-EU-climate-goals/config.industry.yaml"
         )
+        
     configure_logging(snakemake)
     set_scenario_config(snakemake)
 
@@ -61,6 +66,15 @@ if __name__ == "__main__":
 
     nodal_production_stacked = nodal_production.stack()
     nodal_production_stacked.index.names = [None, None]
+
+    params = snakemake.params.industry
+    year = int(snakemake.wildcards.planning_horizons)
+    #industry_production_factor = get(params["industry_production_factor"], year)
+    #nodal_production_stacked = nodal_production_stacked * industry_production_factor
+
+    gdp_growth = get(params["industry_production_factor"]["gdp_growth"])
+    industry_production_factor = (1+gdp_growth)**(year-2019)
+    nodal_production_stacked = nodal_production_stacked * industry_production_factor
 
     # final energy consumption per node and industry (TWh/a)
     nodal_df = (

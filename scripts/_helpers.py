@@ -757,8 +757,21 @@ def update_config_from_wildcards(config, w, inplace=True):
                 price = float(parts[i + 1])
                 config["sector"]["imports"]["price"][carrier] = price
 
-        if "CCL" in opts:
-            config["solving"]["constraints"]["CCL"] = True
+        # Enable gdp for industry
+        #gdp_growth_prefix = [o for o in opts if o.startswith("growth+")]
+        #if gdp_growth_prefix:
+        #    parts = gdp_growth_prefix[0].split("+")[1:]  
+
+        #    config["industry"]["industry_production_factor"] = float(parts[0]) / 100
+        
+        #gdp_decay_prefix = [o for o in opts if o.startswith("decay+")]
+        #if gdp_decay_prefix:
+        #    parts = gdp_decay_prefix[0].split("+")[1:]  
+
+        #    config["industry"]["industry_production_factor"] = float(parts[0]) / 100 * (-1)
+
+        #if "CCL" in opts:
+        #    config["solving"]["constraints"]["CCL"] = True
 
         eq_value = get_opt(opts, r"^EQ+\d*\.?\d+(c|)")
         for o in opts:
