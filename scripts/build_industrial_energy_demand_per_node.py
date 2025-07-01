@@ -67,11 +67,9 @@ if __name__ == "__main__":
     nodal_production_stacked = nodal_production.stack()
     nodal_production_stacked.index.names = [None, None]
 
+    # industry production growth based on gdp growth
     params = snakemake.params.industry
     year = int(snakemake.wildcards.planning_horizons)
-    #industry_production_factor = get(params["industry_production_factor"], year)
-    #nodal_production_stacked = nodal_production_stacked * industry_production_factor
-
     gdp_growth = get(params["industry_production_factor"]["gdp_growth"])
     industry_production_factor = (1+gdp_growth)**(year-2019)
     nodal_production_stacked = nodal_production_stacked * industry_production_factor
