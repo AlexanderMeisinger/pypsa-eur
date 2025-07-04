@@ -40,9 +40,9 @@ if __name__ == "__main__":
             "build_industrial_energy_demand_per_node",
             opts="",
             clusters="39",
-            sector_opts="144H-imp+H2+0-growth+2",
+            sector_opts="144H-imp+H2+50",
             planning_horizons="2050",
-            configfiles="/mnt/e/H2GMA/Github/AP10/analyse-h2g-a-ap10/config/base-EU-climate-goals/config.industry.yaml"
+            configfiles="/mnt/e/H2GMA/Github/AP10/analyse-h2g-a-ap10/config/main-wp3-gdp/config.industry_gdp+0.02.yaml"
         )
         
     configure_logging(snakemake)
@@ -71,7 +71,8 @@ if __name__ == "__main__":
     params = snakemake.params.industry
     year = int(snakemake.wildcards.planning_horizons)
     gdp_growth = get(params["industry_production_factor"]["gdp_growth"])
-    industry_production_factor = (1+gdp_growth)**(year-2019)
+    gdp_elastisty = get(params["industry_production_factor"]["gdp_elasticity"])
+    industry_production_factor = round((1+gdp_growth)**((year-2019)*gdp_elastisty), 2)
     nodal_production_stacked = nodal_production_stacked * industry_production_factor
 
     # final energy consumption per node and industry (TWh/a)
