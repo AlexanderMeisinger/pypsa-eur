@@ -572,7 +572,7 @@ plotting:
     waste CHP CC: '#e3d3ff'
     non-sequestered HVC: '#8f79b5'
     HVC to air: 'k'
-    import H2: '#db8ccd'
+    import H2:  '#A8D5BA'
     import gas: '#f7a572'
     import NH3: '#e2ed74'
     import oil: '#93eda2'
