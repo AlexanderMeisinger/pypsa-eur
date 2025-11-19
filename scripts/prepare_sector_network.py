@@ -5377,13 +5377,14 @@ def add_waste_heat(
             ) * options["use_electrolysis_waste_heat"]
 
         # Fuel cell waste heat
-        if options["use_fuel_cell_waste_heat"] and "H2 Fuel Cell" in link_carriers:
+        use_fuell_cell_waste_heat = get(snakemake.params.sector["use_fuel_cell_waste_heat"], investment_year)
+        if use_fuell_cell_waste_heat and "H2 Fuel Cell" in link_carriers:
             n.links.loc[urban_central + " H2 Fuel Cell", "bus2"] = (
                 urban_central + " urban central heat"
             )
             n.links.loc[urban_central + " H2 Fuel Cell", "efficiency2"] = (
                 0.95 - n.links.loc[urban_central + " H2 Fuel Cell", "efficiency"]
-            ) * options["use_fuel_cell_waste_heat"]
+            ) * use_fuell_cell_waste_heat
 
 
 def add_agriculture(
