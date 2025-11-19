@@ -6031,6 +6031,8 @@ def add_import_options(
     import_options = import_config["price"]
     logger.info(f"Adding import options:\n{pd.Series(import_options)}")
 
+    if 'Methanol' in import_options:
+        import_options['methanol'] = import_options.pop('Methanol')
     if "methanol" in import_options:
         co2_intensity = costs.at["methanolisation", "carbondioxide-input"]
 
@@ -6082,7 +6084,7 @@ def add_import_options(
             efficiency=1 / co2_intensity,
             marginal_cost=import_options["gas"] / co2_intensity,
             p_nom=p_nom / co2_intensity,
-        )
+        ) # Note: Converion from lng to gas is missing (import paper)
 
     if "NH3" in import_options:
         if options["ammonia"]:
@@ -6122,10 +6124,11 @@ if __name__ == "__main__":
 
         snakemake = mock_snakemake(
             "prepare_sector_network",
-            opts="",
-            clusters="10",
-            sector_opts="",
+            clusters="39",
+            opts = "Ep1000",
+            sector_opts="144H-imp+H2+100",
             planning_horizons="2050",
+            configfiles="/home/alex-charly/SSD/H2GMA/Github/AP10/analyse-h2g-a-ap10/config/base-wp10-overnight/config.GreenDeal_2030.yaml"
         )
 
     configure_logging(snakemake)  # pylint: disable=E0606
