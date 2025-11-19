@@ -494,8 +494,8 @@ plotting:
     H2 Fuel Cell: '#c251ae'
     H2 fuel cell: '#c251ae'
     H2 turbine: '#991f83'
-    H2 Electrolysis: '#ff29d9'
-    H2 electrolysis: '#ff29d9'
+    H2 Electrolysis: '#ADD8E6'
+    H2 electrolysis: '#ADD8E6'
     # ammonia
     NH3: '#46caf0'
     ammonia: '#46caf0'
