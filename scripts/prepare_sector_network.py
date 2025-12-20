@@ -1453,6 +1453,41 @@ def add_ammonia(
         lifetime=costs.at["Ammonia cracker", "lifetime"],
     )
 
+    if options["ammonia_turbine"]:
+        logger.info(
+            "Adding ammonia turbine for re-electrification. Assuming OCGT and CCGT technology costs."
+        )
+        # TODO: perhaps replace with ammonia-specific technology assumptions.
+
+        n.add(
+            "Link",
+            nodes + " OCGT ammonia",
+            bus0=spatial.ammonia.nodes,
+            bus1=nodes,
+            p_nom_extendable=True,
+            carrier="OCGT ammonia",
+            efficiency=costs.at["OCGT", "efficiency"],
+            capital_cost=costs.at["OCGT", "capital_cost"]
+            * costs.at["OCGT", "efficiency"],  # NB: fixed cost is per MWel
+            marginal_cost=costs.at["OCGT", "VOM"],
+            lifetime=costs.at["OCGT", "lifetime"],
+        )
+
+        n.add(
+            "Link",
+            nodes,
+            suffix=" CCGT ammonia",
+            bus0=spatial.ammonia.nodes,
+            bus1=nodes,
+            carrier="CCGT ammonia",
+            p_nom_extendable=True,
+            capital_cost=costs.at["CCGT", "capital_cost"] 
+            * costs.at["OCGT", "efficiency"],  # NB: fixed cost is per MWel
+            marginal_cost=costs.at["CCGT", "VOM"],
+            efficiency=costs.at["CCGT", "efficiency"],
+            lifetime=costs.at["CCGT", "lifetime"],
+        )
+
     # Ammonia Storage
     n.add(
         "Store",
