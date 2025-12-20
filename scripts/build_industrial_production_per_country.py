@@ -295,11 +295,43 @@ def separate_basic_chemicals(demand, year):
 
     demand["Basic chemicals"] -= demand["Ammonia"]
 
+    # methanol  data from 2014 to 2024
+    methanol = pd.read_excel(
+        snakemake.input.methanol_demand,
+        sheet_name="Demand",
+        skiprows=4,
+        header=0,
+        index_col=0,
+        skipfooter=3,
+        na_values=[":"],
+    ).apply(pd.to_numeric, errors="coerce")
+
+    methanol = methanol.iloc[2:,]
+
+    methanol /= 1e6
+
+    methanol.index.name = "ktonMEOH/a"
+
+    there = methanol.index.intersection(demand.index)
+    missing = demand.index.symmetric_difference(there)
+
+    logger.info(f"Following countries have no methanol demand: {missing.tolist()}")
+
+    demand["Methanol"] = 0.0
+
+    year_to_use = min(max(year, 2014), 2024)
+    if year_to_use != year:
+        logger.info(
+            f"Year {year} outside data range. Using data from {year_to_use} for methanol demand."
+        )
+
+    demand.loc[there, "Methanol"] = methanol.loc[there, str(year_to_use)]
+
     # EE, HR and LT got negative demand through subtraction - poor data
     col = "Basic chemicals"
     demand[col] = demand[col].clip(lower=0.0)
 
-    # assume HVC, methanol, chlorine production proportional to non-ammonia basic chemicals
+    # assume HVC and chlorine production proportional to non-ammonia basic chemicals
     distribution_key = (
         demand["Basic chemicals"]
         / params["basic_chemicals_without_NH3_production_today"]
@@ -307,7 +339,6 @@ def separate_basic_chemicals(demand, year):
     )
     demand["HVC"] = params["HVC_production_today"] * 1e3 * distribution_key
     demand["Chlorine"] = params["chlorine_production_today"] * 1e3 * distribution_key
-    demand["Methanol"] = params["methanol_production_today"] * 1e3 * distribution_key
 
     demand.drop(columns=["Basic chemicals"], inplace=True)
 
