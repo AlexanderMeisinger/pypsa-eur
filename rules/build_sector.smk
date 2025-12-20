@@ -775,6 +775,7 @@ rule build_industry_sector_ratios:
         ammonia=config_provider("sector", "ammonia", default=False),
     input:
         ammonia_production=resources("ammonia_production.csv"),
+        methanol_demand = "data/methanol_demand.xlsx",
         idees="data/jrc-idees-2021",
     output:
         industry_sector_ratios=resources("industry_sector_ratios.csv"),
