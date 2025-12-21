@@ -4749,6 +4749,15 @@ def add_industry(
         industrial_demand.loc[nodes, "process emission from feedstock"].sum()
         / industrial_demand.loc[nodes, "naphtha"].sum()
     )
+
+    n.add(
+        "Bus",
+        spatial.co2.process_emissions,
+        location=spatial.co2.locations,
+        carrier="process emissions",
+        unit="t_co2",
+        )
+
     # link to supply the naphtha for industry load
     n.add(
         "Link",
@@ -4924,14 +4933,6 @@ def add_industry(
         bus=nodes,
         carrier="industry electricity",
         p_set=industrial_demand.loc[nodes, "electricity"] / nhours,
-    )
-
-    n.add(
-        "Bus",
-        spatial.co2.process_emissions,
-        location=spatial.co2.locations,
-        carrier="process emissions",
-        unit="t_co2",
     )
 
     if options["co2_spatial"] or options["co2_network"]:
