@@ -453,6 +453,7 @@ def chemicals_industry():
             na_values=[":"],
         ).apply(pd.to_numeric, errors="coerce")
         methanol = methanol.iloc[2:,]
+        methanol /= 1e9
         methanol_total = methanol.loc[
             methanol.index.intersection(eu27), str(max(2018, year))
         ].sum()
