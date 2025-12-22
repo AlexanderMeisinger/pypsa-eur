@@ -6196,7 +6196,7 @@ def add_import_options(
             "Generator",
             port_h2_nodes,
             suffix=" import",
-            bus=p_nom.index,
+            bus=port_h2_nodes,
             carrier="import H2",
             p_nom=1e7,
             marginal_cost=import_options["H2"],
