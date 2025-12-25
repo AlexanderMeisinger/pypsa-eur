@@ -3666,6 +3666,25 @@ def add_methanol(
         options=options,
     )
 
+    # Methanol Storage
+    # based on https://www.engineeringtoolbox.com/fossil-fuels-energy-content-d_1298.html
+    mwh_per_m3 = 5.54 * 791 * 1e-3  # kWh/kg * kg/m3 * MWh/kWh
+    capital_cost_MeOH_storage = (
+        costs.at["General liquid hydrocarbon storage (product)", "capital_cost"]
+        / mwh_per_m3)
+    
+    n.add(
+        "Store",
+        spatial.methanol.nodes,
+        suffix=" methanol store",
+        bus=spatial.methanol.nodes,
+        e_nom_extendable=True,
+        e_cyclic=True,
+        carrier="methanol store",
+        capital_cost=capital_cost_MeOH_storage,
+        lifetime=costs.at["General liquid hydrocarbon storage (product)", "lifetime"],
+    )
+
     if options["biomass"]:
         if methanol_options["biomass_to_methanol"]:
             add_biomass_to_methanol(n=n, costs=costs)
