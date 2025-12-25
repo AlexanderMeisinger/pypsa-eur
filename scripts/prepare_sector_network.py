@@ -134,17 +134,26 @@ def define_spatial(nodes, options):
     spatial.gas.df = pd.DataFrame(vars(spatial.gas), index=nodes)
 
     # ammonia
-
     if options["ammonia"]:
         spatial.ammonia = SimpleNamespace()
         if options["ammonia"] == "regional":
             spatial.ammonia.nodes = nodes + " NH3"
             spatial.ammonia.locations = nodes
+            spatial.ammonia.demand_locations = nodes
             spatial.ammonia.shipping = nodes + " shipping NH3"
+            spatial.ammonia.industry = nodes + " industry NH3"
+        if options["ammonia"] == "regional_demand":
+            spatial.ammonia.nodes = ["EU NH3"]
+            spatial.ammonia.locations = ["EU"]
+            spatial.ammonia.demand_locations = nodes
+            spatial.ammonia.shipping = nodes + " shipping NH3"
+            spatial.ammonia.industry = nodes + " industry NH3"
         else:
             spatial.ammonia.nodes = ["EU NH3"]
             spatial.ammonia.locations = ["EU"]
+            spatial.ammonia.demand_locations = ["EU"]
             spatial.ammonia.shipping = ["EU shipping NH3"]
+            spatial.ammonia.industry = ["EU industry NH3"]
 
         spatial.ammonia.df = pd.DataFrame(vars(spatial.ammonia), index=nodes)
 
@@ -1502,25 +1511,6 @@ def add_ammonia(
         ],
         lifetime=costs.at["NH3 (l) storage tank incl. liquefaction", "lifetime"],
     )
-
-    options["ammonia_transport"] = True
-    if options["ammonia_transport"]:
-        # add ammomnia transport
-        ammonia_transport = create_network_topology(
-            n, "ammonia transport "
-        )
-
-        # Assumption: No costs
-
-        n.add(
-            "Link",
-            ammonia_transport.index,
-            bus0=ammonia_transport.bus0 + " NH3",
-            bus1=ammonia_transport.bus1 + " NH3",
-            p_nom_extendable=False,
-            p_nom=1e7, # ToDo: May change
-            carrier="ammonia transport",
-        )
 
 
 def insert_electricity_distribution_grid(
@@ -4999,7 +4989,7 @@ def add_industry(
     )
 
     if options["ammonia"]:
-        if options["ammonia"] == "regional":
+        if options["ammonia"] == "regional" or options["ammonia"] == "regional_demand":
             p_set = (
                 industrial_demand.loc[spatial.ammonia.locations, "ammonia"].rename(
                     index=lambda x: x + " NH3"
@@ -5010,12 +5000,30 @@ def add_industry(
             p_set = industrial_demand["ammonia"].sum() / nhours
 
         n.add(
+            "Bus",
+            spatial.ammonia.industry,
+            location=spatial.ammonia.demand_locations,
+            carrier="industry NH3",
+            unit="MWh_LHV",
+        )
+
+        n.add(
             "Load",
-            spatial.ammonia.nodes,
-            bus=spatial.ammonia.nodes,
-            carrier="NH3",
+            spatial.ammonia.industry,
+            bus=spatial.ammonia.industry,
+            carrier="industry NH3",
             p_set=p_set,
         )
+
+        n.add(
+            "Link",
+            spatial.ammonia.industry,
+            bus0=spatial.ammonia.nodes,
+            bus1=spatial.ammonia.industry,
+            carrier="industry NH3",
+            p_nom_extendable=True,
+        )
+
 
     if industrial_demand[["coke", "coal"]].sum().sum() > 0:
         add_carrier_buses(
@@ -5326,13 +5334,13 @@ def add_shipping(
             * efficiency
         )
 
-        if not options["ammonia"] == "regional":
+        if not options["ammonia"] == "regional" or options["ammonia"] == "regional_demand":
             p_set_ammonia_shipping = p_set_ammonia_shipping.sum()
 
         n.add(
             "Bus",
             spatial.ammonia.shipping,
-            location=spatial.ammonia.locations,
+            location=spatial.ammonia.demand_locations,
             carrier="shipping NH3",
             unit="MWh_LHV",
         )
