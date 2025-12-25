@@ -1503,6 +1503,25 @@ def add_ammonia(
         lifetime=costs.at["NH3 (l) storage tank incl. liquefaction", "lifetime"],
     )
 
+    options["ammonia_transport"] = True
+    if options["ammonia_transport"]:
+        # add ammomnia transport
+        ammonia_transport = create_network_topology(
+            n, "ammonia transport "
+        )
+
+        # Assumption: No costs
+
+        n.add(
+            "Link",
+            ammonia_transport.index,
+            bus0=ammonia_transport.bus0 + " NH3",
+            bus1=ammonia_transport.bus1 + " NH3",
+            p_nom_extendable=False,
+            p_nom=1e7, # ToDo: May change
+            carrier="ammonia transport",
+        )
+
 
 def insert_electricity_distribution_grid(
     n: pypsa.Network,
