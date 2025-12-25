@@ -5010,8 +5010,8 @@ def add_industry(
     if options["ammonia"]:
         if options["ammonia"] == "regional" or options["ammonia"] == "regional_demand":
             p_set = (
-                industrial_demand.loc[spatial.ammonia.locations, "ammonia"].rename(
-                    index=lambda x: x + " NH3"
+                industrial_demand.loc[spatial.ammonia.demand_locations, "ammonia"].rename(
+                    index=lambda x: x + " industry NH3"
                 )
                 / nhours
             )
