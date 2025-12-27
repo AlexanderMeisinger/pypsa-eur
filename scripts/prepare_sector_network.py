@@ -5353,7 +5353,7 @@ def add_shipping(
             * efficiency
         )
 
-        if not options["ammonia"] == "regional" or options["ammonia"] == "regional_demand":
+        if options["ammonia"] != "regional" and options["ammonia"] != "regional_demand":
             p_set_ammonia_shipping = p_set_ammonia_shipping.sum()
 
         n.add(
