@@ -142,7 +142,7 @@ def define_spatial(nodes, options):
             spatial.ammonia.demand_locations = nodes
             spatial.ammonia.shipping = nodes + " shipping NH3"
             spatial.ammonia.industry = nodes + " industry NH3"
-        if options["ammonia"] == "regional_demand":
+        elif options["ammonia"] == "regional_demand":
             spatial.ammonia.nodes = ["EU NH3"]
             spatial.ammonia.locations = ["EU"]
             spatial.ammonia.demand_locations = nodes
