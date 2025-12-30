@@ -505,6 +505,7 @@ plotting:
     shipping NH3: '#1fb0d4'
     CCGT ammonia: '#0b7aa1'
     OCGT ammonia: '#1598c2'
+    industry NH3: '#2fa4c9'
     # syngas
     Sabatier: '#9850ad'
     methanation: '#c44ce6'
