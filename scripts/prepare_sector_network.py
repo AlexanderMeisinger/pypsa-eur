@@ -6104,16 +6104,21 @@ def add_import_options(
             )
 
     if "H2" in import_options:
-        p_nom = gas_input_nodes["pipeline"].dropna()
-        p_nom.rename(lambda x: x + " H2", inplace=True)
+        # Get port infrastructure
+        ports = pd.read_csv(snakemake.input.ports)
+        ports = set(ports["country"].dropna().unique())
+
+        port_h2_nodes = [
+            node for node in spatial.h2.nodes
+            if node[:2] in ports]
 
         n.add(
             "Generator",
-            p_nom.index,
+            port_h2_nodes,
             suffix=" import",
-            bus=p_nom.index,
+            bus=port_h2_nodes,
             carrier="import H2",
-            p_nom=p_nom,
+            p_nom=1e7,
             marginal_cost=import_options["H2"],
         )
 
