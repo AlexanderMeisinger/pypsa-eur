@@ -5177,9 +5177,10 @@ def add_shipping(
 
     shipping_hydrogen_share = get(options["shipping_hydrogen_share"], investment_year)
     shipping_methanol_share = get(options["shipping_methanol_share"], investment_year)
+    shipping_ammonia_share = get(options["shipping_ammonia_share"], investment_year)
     shipping_oil_share = get(options["shipping_oil_share"], investment_year)
 
-    total_share = shipping_hydrogen_share + shipping_methanol_share + shipping_oil_share
+    total_share = shipping_hydrogen_share + shipping_methanol_share + shipping_oil_share + shipping_ammonia_share
     if total_share != 1:
         logger.warning(
             f"Total shipping shares sum up to {total_share:.2%}, corresponding to increased or decreased demand assumptions."
@@ -5319,6 +5320,47 @@ def add_shipping(
             p_nom_extendable=True,
             efficiency2=costs.at["oil", "CO2 intensity"],
         )
+
+
+    if shipping_ammonia_share:
+        efficiency = (
+            options["shipping_oil_efficiency"] / options["shipping_ammonia_efficiency"]
+        )
+
+        p_set_ammonia_shipping = (
+            shipping_ammonia_share
+            * p_set.rename(lambda x: x + " shipping NH3")
+            * efficiency
+        )
+
+        if options["ammonia"] != "regional" and options["ammonia"] != "regional_demand":
+            p_set_ammonia_shipping = p_set_ammonia_shipping.sum()
+
+        n.add(
+            "Bus",
+            spatial.ammonia.shipping,
+            location=spatial.ammonia.demand_locations,
+            carrier="shipping NH3",
+            unit="MWh_LHV",
+        )
+
+        n.add(
+            "Load",
+            spatial.ammonia.shipping,
+            bus=spatial.ammonia.shipping,
+            carrier="shipping NH3",
+            p_set=p_set_ammonia_shipping,
+        )
+
+        n.add(
+            "Link",
+            spatial.ammonia.shipping,
+            bus0=spatial.ammonia.nodes,
+            bus1=spatial.ammonia.shipping,
+            carrier="shipping NH3",
+            p_nom_extendable=True,
+        )
+
 
 
 def add_waste_heat(

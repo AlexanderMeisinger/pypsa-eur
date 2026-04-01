@@ -502,6 +502,10 @@ plotting:
     ammonia store: '#00ace0'
     ammonia cracker: '#87d0e6'
     Haber-Bosch: '#076987'
+    shipping NH3: '#1fb0d4'
+    CCGT ammonia: '#0b7aa1'
+    OCGT ammonia: '#1598c2'
+    industry NH3: '#2fa4c9'
     # syngas
     Sabatier: '#9850ad'
     methanation: '#c44ce6'
@@ -524,7 +528,7 @@ plotting:
     OCGT methanol: '#B98F76'
     methanol: '#FF7B00'
     methanol transport: '#FF7B00'
-    shipping methanol: '#468c8b'
+    shipping methanol: '#D46600'
     industry methanol: '#468c8b'
     # co2
     CC: '#f29dae'
