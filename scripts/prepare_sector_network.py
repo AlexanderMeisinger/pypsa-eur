@@ -134,15 +134,26 @@ def define_spatial(nodes, options):
     spatial.gas.df = pd.DataFrame(vars(spatial.gas), index=nodes)
 
     # ammonia
-
     if options["ammonia"]:
         spatial.ammonia = SimpleNamespace()
         if options["ammonia"] == "regional":
             spatial.ammonia.nodes = nodes + " NH3"
             spatial.ammonia.locations = nodes
+            spatial.ammonia.demand_locations = nodes
+            spatial.ammonia.shipping = nodes + " shipping NH3"
+            spatial.ammonia.industry = nodes + " industry NH3"
+        elif options["ammonia"] == "regional_demand":
+            spatial.ammonia.nodes = ["EU NH3"]
+            spatial.ammonia.locations = ["EU"]
+            spatial.ammonia.demand_locations = nodes
+            spatial.ammonia.shipping = nodes + " shipping NH3"
+            spatial.ammonia.industry = nodes + " industry NH3"
         else:
             spatial.ammonia.nodes = ["EU NH3"]
             spatial.ammonia.locations = ["EU"]
+            spatial.ammonia.demand_locations = ["EU"]
+            spatial.ammonia.shipping = ["EU shipping NH3"]
+            spatial.ammonia.industry = ["EU industry NH3"]
 
         spatial.ammonia.df = pd.DataFrame(vars(spatial.ammonia), index=nodes)
 
@@ -4942,10 +4953,10 @@ def add_industry(
     )
 
     if options["ammonia"]:
-        if options["ammonia"] == "regional":
+        if options["ammonia"] == "regional" or options["ammonia"] == "regional_demand":
             p_set = (
-                industrial_demand.loc[spatial.ammonia.locations, "ammonia"].rename(
-                    index=lambda x: x + " NH3"
+                industrial_demand.loc[spatial.ammonia.demand_locations, "ammonia"].rename(
+                    index=lambda x: x + " industry NH3"
                 )
                 / nhours
             )
@@ -4953,12 +4964,30 @@ def add_industry(
             p_set = industrial_demand["ammonia"].sum() / nhours
 
         n.add(
+            "Bus",
+            spatial.ammonia.industry,
+            location=spatial.ammonia.demand_locations,
+            carrier="industry NH3",
+            unit="MWh_LHV",
+        )
+
+        n.add(
             "Load",
-            spatial.ammonia.nodes,
-            bus=spatial.ammonia.nodes,
-            carrier="NH3",
+            spatial.ammonia.industry,
+            bus=spatial.ammonia.industry,
+            carrier="industry NH3",
             p_set=p_set,
         )
+
+        n.add(
+            "Link",
+            spatial.ammonia.industry,
+            bus0=spatial.ammonia.nodes,
+            bus1=spatial.ammonia.industry,
+            carrier="industry NH3",
+            p_nom_extendable=True,
+        )
+
 
     if industrial_demand[["coke", "coal"]].sum().sum() > 0:
         add_carrier_buses(
