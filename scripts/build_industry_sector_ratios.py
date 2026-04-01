@@ -442,7 +442,23 @@ def chemicals_industry():
     df.loc["elec", sector] -= chlorine_total * params["MWh_elec_per_tCl"] * 1e3
 
     # subtract methanol demand (in MtMeOH/a)
-    methanol_total = params["methanol_production_today"]
+    if snakemake.params.industry["methanol_demand_today"] == True:
+        methanol = pd.read_excel(
+            snakemake.input.methanol_demand,
+            sheet_name="Demand",
+            skiprows=4,
+            header=0,
+            index_col=0,
+            skipfooter=3,
+            na_values=[":"],
+        ).apply(pd.to_numeric, errors="coerce")
+        methanol = methanol.iloc[2:,]
+        methanol /= 1e9
+        methanol_total = methanol.loc[
+            methanol.index.intersection(eu27), str(max(2018, year))
+        ].sum()
+    else: 
+        methanol_total = params["methanol_production_today"]
     df.loc["methane", sector] -= methanol_total * params["MWh_CH4_per_tMeOH"] * 1e3
     df.loc["elec", sector] -= methanol_total * params["MWh_elec_per_tMeOH"] * 1e3
 

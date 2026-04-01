@@ -864,7 +864,8 @@ industry:
   chlorine_production_today: 9.58
   MWh_elec_per_tCl: 3.6
   MWh_H2_per_tCl: -0.9372
-  methanol_production_today: 1.5
+  methanol_production_today: 1.5 # methanol_demand_today has to be false
+  methanol_demand_today: true # true: methanol_production_today will be ignored
   MWh_elec_per_tMeOH: 0.167
   MWh_CH4_per_tMeOH: 10.25
   MWh_MeOH_per_tMeOH: 5.528
