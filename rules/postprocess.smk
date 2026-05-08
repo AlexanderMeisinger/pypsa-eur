@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 
-if config["foresight"] != "perfect":
+if config["foresight"] != "perfect" and config["foresight"] != "myopic":
 
     rule plot_power_network_clustered:
         params:
@@ -155,37 +155,6 @@ rule make_summary:
                     config_provider("scenario", "planning_horizons", 0)(w)
                 )
             )
-        ),
-        ac_plot=expand(
-            resources("maps/power-network-s-{clusters}.pdf"),
-            **config["scenario"],
-            allow_missing=True,
-        ),
-        costs_plot=expand(
-            RESULTS
-            + "maps/base_s_{clusters}_{opts}_{sector_opts}-costs-all_{planning_horizons}.pdf",
-            **config["scenario"],
-            allow_missing=True,
-        ),
-        h2_plot=lambda w: expand(
-            (
-                RESULTS
-                + "maps/base_s_{clusters}_{opts}_{sector_opts}-h2_network_{planning_horizons}.pdf"
-                if config_provider("sector", "H2_network")(w)
-                else []
-            ),
-            **config["scenario"],
-            allow_missing=True,
-        ),
-        ch4_plot=lambda w: expand(
-            (
-                RESULTS
-                + "maps/base_s_{clusters}_{opts}_{sector_opts}-ch4_network_{planning_horizons}.pdf"
-                if config_provider("sector", "gas_network")(w)
-                else []
-            ),
-            **config["scenario"],
-            allow_missing=True,
         ),
     output:
         nodal_costs=RESULTS + "csvs/nodal_costs.csv",

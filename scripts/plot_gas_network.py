@@ -236,18 +236,19 @@ if __name__ == "__main__":
             sector_opts="4380H-T-H-B-I-A-dist1",
         )
 
-    configure_logging(snakemake)
-    set_scenario_config(snakemake)
+    #configure_logging(snakemake)
+    #set_scenario_config(snakemake)
 
-    n = pypsa.Network(snakemake.input.network)
+    #n = pypsa.Network(snakemake.input.network)
 
-    regions = gpd.read_file(snakemake.input.regions).set_index("name")
+    #regions = gpd.read_file(snakemake.input.regions).set_index("name")
 
-    map_opts = snakemake.params.plotting["map"]
+    #map_opts = snakemake.params.plotting["map"]
 
-    if map_opts["boundaries"] is None:
-        map_opts["boundaries"] = regions.total_bounds[[0, 2, 1, 3]] + [-1, 1, -1, 1]
+    #if map_opts["boundaries"] is None:
+    #    map_opts["boundaries"] = regions.total_bounds[[0, 2, 1, 3]] + [-1, 1, -1, 1]
 
-    proj = load_projection(snakemake.params.plotting)
+    #proj = load_projection(snakemake.params.plotting)
 
-    plot_ch4_map(n)
+    #plot_ch4_map(n)
+    print("plot_ch4_map has been removed")
